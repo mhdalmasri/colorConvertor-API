@@ -16,19 +16,31 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // Logic:.......
-
-var myLogger = function (req, res, next) {
-  console.log('Request Type:', req.method)
+// myLogger
+app.use(function (req, res, next) {
   console.log('Request URL:', req.originalUrl)
   next()
-};
-app.use(myLogger);
+}, function (req, res, next) {
+  console.log('Request Type:', req.method)
+  next()
+})
 
 var requestTime = function (req, res, next) {
   req.requestTime = Date.now()
   next()
 };
 app.use(requestTime);
+
+app.use('/convert/keywordtorgb',function (req, res, next) {
+  if (req.query.color){
+    next()
+   }
+  else
+  console.log('Error: Missing query parameter color')
+  res.status(500).send('Error: Missing query parameter color')})
+  
+
+
 app.get("/", (req, res) => res.send(`Hi to Express App .. Date now is : ${req.requestTime}`));
 
 app.get("/convert/rgbtohsl", (req, res) =>
